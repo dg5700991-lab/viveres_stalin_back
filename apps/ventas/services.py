@@ -104,7 +104,18 @@ def crear_venta(*, usuario, items, pagos, idempotency_key, cliente_id=None,
                             motivo=f"Venta #{venta.id}", venta=venta)
             for p in pagos:
                 if p["metodo"] == MetodoPago.FIADO:
-                    registrar_cargo(cliente_id=cliente_id, monto=p["monto"], usuario=usuario, venta=venta)
+                    target_cliente_id = cliente_id
+                    if not target_cliente_id and (nombre_fiado or "").strip():
+                        c_obj, _ = Cliente.objects.get_or_create(
+                            nombre=nombre_fiado.strip(),
+                            defaults={"activo": True}
+                        )
+                        target_cliente_id = c_obj.id
+                        if not venta.cliente_id:
+                            venta.cliente = c_obj
+                            venta.save(update_fields=["cliente"])
+                    if target_cliente_id:
+                        registrar_cargo(cliente_id=target_cliente_id, monto=p["monto"], usuario=usuario, venta=venta)
             auditar(usuario, "VENTA_CREADA", "Venta", venta.id, {"total": total, "origen": origen})
             venta.vuelto = vuelto
             # Enviar email al cliente registrado si tiene correo (nunca bloquea la venta)

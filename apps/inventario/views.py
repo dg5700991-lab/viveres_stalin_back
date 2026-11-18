@@ -33,7 +33,7 @@ class MovimientoViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewse
 
 
 class EntradaView(APIView):
-    permission_classes = [EsAdmin]
+    permission_classes = [EsPersonal]
 
     def post(self, request):
         s = EntradaSerializer(data=request.data)
@@ -46,7 +46,7 @@ class EntradaView(APIView):
 
 
 class AjusteView(APIView):
-    permission_classes = [EsAdmin]
+    permission_classes = [EsPersonal]
 
     def post(self, request):
         s = AjusteSerializer(data=request.data)
