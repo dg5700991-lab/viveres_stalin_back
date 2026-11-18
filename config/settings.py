@@ -38,6 +38,10 @@ if not SECRET_KEY:
 ALLOWED_HOSTS = env_lista("DJANGO_ALLOWED_HOSTS") or (
     ["localhost", "127.0.0.1", "testserver"] if (DEBUG or TESTING) else []
 )
+# En Vercel se admiten automáticamente los dominios de vercel
+if any(".vercel.app" in h or h == "*" for h in ALLOWED_HOSTS) or not ALLOWED_HOSTS:
+    if ".vercel.app" not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.extend([".vercel.app", "viveres-stalin-back.vercel.app"])
 
 INSTALLED_APPS = [
     "django.contrib.admin",
