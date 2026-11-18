@@ -155,9 +155,27 @@ SIMPLE_JWT = {
     "UPDATE_LAST_LOGIN": True,
 }
 
-CORS_ALLOWED_ORIGINS = env_lista("CORS_ALLOWED_ORIGINS")  # lista blanca explícita
-CORS_ALLOW_CREDENTIALS = False
-CSRF_TRUSTED_ORIGINS = env_lista("CSRF_TRUSTED_ORIGINS")
+# Permitir CORS para cualquier frontend local o desplegado en Vercel
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https://.*\.vercel\.app$",
+    r"^http://localhost:[0-9]+$",
+    r"^http://127\.0\.0\.1:[0-9]+$",
+]
+CORS_ALLOWED_ORIGINS = env_lista("CORS_ALLOWED_ORIGINS") or [
+    "http://localhost:3000",
+    "http://localhost:5173",
+    "http://localhost:5174",
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1:5173",
+]
+CSRF_TRUSTED_ORIGINS = env_lista("CSRF_TRUSTED_ORIGINS") or [
+    "https://*.vercel.app",
+    "https://viveres-stalin-back.vercel.app",
+    "http://localhost:3000",
+    "http://localhost:5173",
+]
 
 # --------------------------------------------------------------------------- archivos: imágenes en Supabase Storage (S3 compatible)
 STATIC_URL = "static/"
