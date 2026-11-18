@@ -1,0 +1,39 @@
+# Secretos y credenciales (NUNCA SUBIR A GIT)
+.env
+.env.*
+!.env.example
+
+# Base de datos local
+*.sqlite3
+*.db
+
+# Entorno virtual Python
+.venv/
+env/
+venv/
+ENV/
+
+# Python cache y compilados
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Archivos estáticos y multimedia
+media/
+staticfiles/
+
+# Logs y temporales
+*.log
+.coverage
+htmlcov/
+.pytest_cache/
+
+# IDE y editores
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Vercel
+.vercel/
