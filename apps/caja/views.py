@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from apps.core.permissions import EsAdmin, EsPersonal
 from apps.usuarios.models import Rol
 
-from .models import EstadoTurno, Turno
+from .models import EstadoTurno, Turno, CarritoCaja
 from .serializers import (AperturaSerializer, CierreSerializer, MovimientoCajaSerializer, TurnoSerializer)
 from .services import (abrir_turno, calcular_cuadre, cerrar_turno, exigir_turno, registrar_movimiento_caja)
 
@@ -62,4 +62,18 @@ class TurnoViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.Ge
     def cuadre(self, request, pk=None):
         t = self.get_object()
         return Response({"turno": TurnoSerializer(t).data, "cuadre": calcular_cuadre(t)})
+
+    @action(detail=False, methods=["get", "put", "post"], url_path="carrito")
+    def carrito(self, request):
+        obj, _ = CarritoCaja.objects.get_or_create(cajero=request.user)
+        if request.method in ["PUT", "POST"]:
+            items = request.data.get("items", [])
+            if not isinstance(items, list):
+                return Response({"detail": "items debe ser una lista"}, status=status.HTTP_400_BAD_REQUEST)
+            obj.items = items
+            obj.version = (obj.version or 0) + 1
+            obj.save(update_fields=["items", "version", "actualizado_en"])
+            return Response({"items": obj.items, "version": obj.version, "actualizado_en": obj.actualizado_en})
+
+        return Response({"items": obj.items, "version": obj.version, "actualizado_en": obj.actualizado_en})
 

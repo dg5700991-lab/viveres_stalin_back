@@ -60,3 +60,22 @@ class MovimientoCaja(SoloAgregarModel):
     class Meta:
         ordering = ["creado_en"]
         constraints = [models.CheckConstraint(condition=Q(monto__gt=0), name="movcaja_monto_positivo")]
+
+
+class CarritoCaja(models.Model):
+    """Carrito de venta activo compartido entre dispositivos (ej. Tablet en mostrador y Celular escáner)."""
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    cajero = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="carrito_caja",
+    )
+    items = models.JSONField(default=list, blank=True)
+    version = models.BigIntegerField(default=1)
+    actualizado_en = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "caja_carrito"
+        verbose_name = "Carrito de caja"
+        verbose_name_plural = "Carritos de caja"
+
